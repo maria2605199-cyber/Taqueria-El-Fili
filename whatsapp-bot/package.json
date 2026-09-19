@@ -1,0 +1,14 @@
+{
+  "name": "taqueria-el-fili-whatsapp-bot",
+  "version": "1.0.0",
+  "description": "Bot de WhatsApp para Taqueria El Fili: responde numero de cuenta para depositos, menu digital y facturacion.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node test.js"
+  },
+  "dependencies": {
+    "whatsapp-web.js": "^1.26.0",
+    "qrcode-terminal": "^0.12.0"
+  }
+}

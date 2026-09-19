@@ -1,0 +1,22 @@
+{
+  "negocio": {
+    "nombre": "Taqueria El Fili"
+  },
+  "depositos": {
+    "banco": "NOMBRE_DEL_BANCO",
+    "numeroCuenta": "0000000000000000",
+    "clabe": "000000000000000000",
+    "titular": "NOMBRE DEL TITULAR"
+  },
+  "menuDigital": {
+    "mensaje": "Aqui puedes ver nuestro menu digital:",
+    "enlace": "https://ejemplo.com/menu-taqueria-el-fili"
+  },
+  "facturacion": {
+    "rfc": "XAXX010101000",
+    "razonSocial": "RAZON SOCIAL DEL NEGOCIO",
+    "regimenFiscal": "REGIMEN FISCAL",
+    "instrucciones": "Envianos tu RFC, razon social, uso de CFDI y el monto/folio de tu ticket antes de que termine el mes para poder facturar tu compra."
+  },
+  "mensajeNoEntendido": "Gracias por tu mensaje. En breve un encargado te atendera personalmente."
+}
