@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-white text-ink-900 antialiased;
+}
+
+::selection {
+  @apply bg-brand-500/30;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  @apply bg-ink-600/40 rounded-full;
+}
+
+.glass {
+  @apply bg-white/70 backdrop-blur-xl border border-white/60;
+}
+
+.glass-dark {
+  @apply bg-ink-900/70 backdrop-blur-xl border border-white/10;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
