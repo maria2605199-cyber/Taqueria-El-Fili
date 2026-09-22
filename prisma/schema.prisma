@@ -1,0 +1,122 @@
+// Catálogo Inteligente IA — modelo de datos multi-tenant
+// SQLite en desarrollo (archivo local). Para producción, cambia el
+// provider a "postgresql" y define DATABASE_URL con tu instancia real:
+// nunca se necesitan cambios de código, solo de configuración.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Plan {
+  BASICO
+  PRO
+  PREMIUM
+}
+
+enum AnalyticsEventType {
+  PRODUCT_VIEW
+  WHATSAPP_CLICK
+  AI_QUERY
+  AI_ASSISTANT_MESSAGE
+  CATALOG_VIEW
+}
+
+model User {
+  id           String     @id @default(cuid())
+  name         String
+  email        String     @unique
+  passwordHash String
+  createdAt    DateTime   @default(now())
+  businesses   Business[]
+}
+
+// Cada negocio es un "tenant". Todo dato de producto/categoría/estadística
+// cuelga de un businessId, y cada consulta del panel se filtra por el
+// negocio del usuario autenticado para que nunca se mezclen datos.
+model Business {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String
+  logoUrl     String?
+  whatsapp    String
+  address     String
+  city        String
+  hours       String // JSON string: [{day, open, close}]
+  socials     String // JSON string: {instagram, facebook, tiktok}
+  plan        Plan     @default(BASICO)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId String
+
+  categories Category[]
+  products   Product[]
+  events     AnalyticsEvent[]
+
+  @@index([ownerId])
+}
+
+model Category {
+  id         String   @id @default(cuid())
+  name       String
+  createdAt  DateTime @default(now())
+
+  business   Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  businessId String
+  products   Product[]
+
+  @@unique([businessId, name])
+  @@index([businessId])
+}
+
+model Product {
+  id               String   @id @default(cuid())
+  name             String
+  price            Float
+  shortDescription String
+  description      String
+  tags             String // JSON array string
+  variants         String // JSON array string: [{name, options: []}]
+  imageUrl         String?
+  available        Boolean  @default(true)
+  featured         Boolean  @default(false)
+  faqs             String // JSON array string: [{q,a}]
+  viewCount        Int      @default(0)
+  whatsappClicks   Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  businessId String
+
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?
+
+  events AnalyticsEvent[]
+
+  @@index([businessId])
+  @@index([categoryId])
+}
+
+model AnalyticsEvent {
+  id        String             @id @default(cuid())
+  type      AnalyticsEventType
+  query     String?
+  createdAt DateTime           @default(now())
+
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  businessId String
+
+  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String?
+
+  @@index([businessId, type])
+  @@index([productId])
+}
