@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+/// SQLite has no native enum support in Prisma, so Plan ("BASICO" | "PRO" |
+/// "PREMIUM") and Role ("OWNER" | "STAFF") are plain strings here; the
+/// allowed values are enforced in application code (see src/lib/plans.ts
+/// and the zod schemas in the API routes), not at the database level.
+/// Each Business is an isolated tenant: every child record carries businessId
+/// and every query in the app must be scoped by it (see src/lib/tenant.ts).
+model Business {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?
+  logoUrl     String?
+  coverUrl    String?
+  phone       String   // WhatsApp number, E.164 digits only e.g. 5215512345678
+  address     String?
+  mapUrl      String?
+  hours       String? // free text, e.g. "Lun-Sáb 9:00-21:00"
+  instagram   String?
+  facebook    String?
+  tiktok      String?
+  plan        String   @default("BASICO")
+  primaryColor String  @default("#6c5ce7")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users        User[]
+  categories   Category[]
+  products     Product[]
+  aiQueries    AIQueryLog[]
+  productViews ProductView[]
+  whatsappClicks WhatsAppClick[]
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("OWNER")
+  businessId   String
+  business     Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+}
+
+model Category {
+  id         String   @id @default(cuid())
+  name       String
+  slug       String
+  businessId String
+  business   Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  products   Product[]
+  createdAt  DateTime  @default(now())
+
+  @@unique([businessId, slug])
+}
+
+model Product {
+  id             String   @id @default(cuid())
+  businessId     String
+  business       Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  categoryId     String?
+  category       Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  name           String
+  shortDescription String?
+  description    String?
+  features       String? // JSON stringified string[]
+  tags           String? // JSON stringified string[]
+  faqs           String? // JSON stringified {q,a}[]
+
+  price          Float
+  compareAtPrice Float?
+  imageUrl       String?
+  images         String? // JSON stringified string[] (gallery)
+  variants       String? // JSON stringified {name, options:string[]}[]
+
+  available      Boolean  @default(true)
+  featured       Boolean  @default(false)
+  active         Boolean  @default(true)
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  views          ProductView[]
+  whatsappClicks WhatsAppClick[]
+
+  @@index([businessId])
+  @@index([businessId, active])
+  @@index([businessId, featured])
+}
+
+model AIQueryLog {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  query      String
+  mode       String   // "search" | "assistant"
+  resultCount Int     @default(0)
+  createdAt  DateTime @default(now())
+
+  @@index([businessId, createdAt])
+}
+
+model ProductView {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@index([businessId, productId])
+}
+
+model WhatsAppClick {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  productId  String?
+  product    Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  source     String   // "product" | "general"
+  createdAt  DateTime @default(now())
+
+  @@index([businessId, createdAt])
+}
