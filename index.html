@@ -771,7 +771,7 @@
     {text:"Mayo con sabor: Cinco de Mayo y Día de las Madres", c1:"#3ddc84", c2:"#ff7ac9", bg:MAY_BG},
     {text:"¡Feliz Día del Padre!", c1:"#4fa8ff", c2:"#ffd23f", bg:JUNE_BG},
     {text:"Vacaciones con sabor a taco", c1:"#ffb347", c2:"#ffd23f", bg:JULY_BG},
-    {text:"Recarga energía para el regreso a clases", c1:"#4fa8ff", c2:"#ffd23f"},
+    {text:"Recarga energía para el regreso a clases", c1:"#4fa8ff", c2:"#ffd23f", bg:AUGUSTGRANDPARENTS_BG},
     {text:"¡Viva México! Feliz 15 de Septiembre", c1:"#006341", c2:"#ce1126", c3:"#f4f4f4", tc:"#3ddc84", bg:SEPTEMBER_BG},
     {text:"Antojo de Halloween en El Fili", c1:"#ff7a1a", c2:"#a78bfa", spiders:true, bg:HALLOWEEN_BG},
     {text:"Día de Muertos: honramos la tradición", c1:"#ff9d1f", c2:"#e0409e", c3:"#7a3dcf", bg:NOVEMBER_BG},
@@ -780,7 +780,6 @@
 
   var WOMENSDAY_THEME = {text:"¡Feliz Día de la Mujer!", c1:"#ff4fa3", c2:"#ffb6d9", bg:WOMENSDAY_BG};
   var APRILCHILDREN_THEME = {text:"¡Feliz Día del Niño!", c1:"#ff7ac9", c2:"#4fa8ff", c3:"#ffd23f", bg:APRILCHILDREN_BG};
-  var AUGUSTGRANDPARENTS_THEME = {text:"¡Feliz Día de los Abuelos!", c1:"#d98e4a", c2:"#f2c88f", bg:AUGUSTGRANDPARENTS_BG};
 
   var CORNER_WEB_SVG = '<svg viewBox="0 0 200 200" preserveAspectRatio="none">'
     +'<g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">'
@@ -833,7 +832,6 @@
     var theme = MONTH_THEMES[now_.getMonth()];
     if(now_.getMonth()===2 && now_.getDate()>=7 && now_.getDate()<=9){ theme = WOMENSDAY_THEME; }
     if(now_.getMonth()===3 && now_.getDate()>=27 && now_.getDate()<=30){ theme = APRILCHILDREN_THEME; }
-    if(now_.getMonth()===7 && now_.getDate()===28){ theme = AUGUSTGRANDPARENTS_THEME; }
     if(!theme) return;
     corners.forEach(function(c){
       if(!c) return;
